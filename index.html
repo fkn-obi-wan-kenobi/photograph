@@ -6,15 +6,15 @@
         <title>Surprise for You</title>
         <style>
             body {
-                /* display: flex; */
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
                 height: 100vh;
                 margin: 0;
-                background-color: #f8bbd0; /* Light pink background */
+                background-color: #f8bbd0;
                 font-family: "Arial", sans-serif;
                 text-align: center;
+                position: relative; /* Important to position floating objects */
             }
 
             h1 {
@@ -29,8 +29,8 @@
 
             iframe {
                 margin-top: 20px;
-                width: 300px; /* Reduced width */
-                height: 166px; /* Reduced height */
+                width: 300px;
+                height: 166px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             }
 
@@ -54,13 +54,62 @@
                 font-weight: 100;
                 margin-top: 10px;
             }
+
+            /* Heart shape */
+            .heart {
+                width: 50px;
+                height: 50px;
+                position: absolute;
+                top: 40%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: #d81b60;
+                transform: rotate(-45deg);
+                animation: float 5s ease-in-out infinite;
+            }
+
+            .heart::before,
+            .heart::after {
+                content: "";
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                position: absolute;
+                background-color: #d81b60;
+            }
+
+            .heart::before {
+                top: -25px;
+                left: 0;
+            }
+
+            .heart::after {
+                left: 25px;
+                top: 0;
+            }
+
+            /* Animation to float around */
+            @keyframes float {
+                0% {
+                    transform: translate(-50%, -50%) rotate(-45deg);
+                }
+                50% {
+                    transform: translate(-50%, -150%) rotate(-45deg);
+                }
+                100% {
+                    transform: translate(-50%, -50%) rotate(-45deg);
+                }
+            }
         </style>
     </head>
     <body>
-        <h1>Just for You 💖</h1>
+        <h1>Just for you 💖</h1>
 
         <img src="image.jpg" alt="A cute image for you" />
         <p>You make my heart flutter every day. Hope you enjoy this!</p>
+
+        <!-- Heart floating animation -->
+        <div class="heart"></div>
 
         <!-- Embed SoundCloud music -->
         <iframe
