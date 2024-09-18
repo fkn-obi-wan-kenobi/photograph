@@ -1,40 +1,162 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Surprise for You</title>
-        <style>
-            body {
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                margin: 0;
-                background-color: #f8bbd0;
-                font-family: "Arial", sans-serif;
-                text-align: center;
-                position: relative;
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Surprise for You</title>
+    <style>
+        body {
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8bbd0;
+            font-family: "Arial", sans-serif;
+            text-align: center;
+            position: relative;
+        }
+
+        h1 {
+            color: #d81b60;
+        }
+
+        img {
+            max-width: 80%;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        iframe {
+            margin-top: 20px;
+            width: 300px;
+            height: 166px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .soundcloud-info {
+            font-size: 10px;
+            color: #cccccc;
+            line-break: anywhere;
+            word-break: normal;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-family:
+                Interstate,
+                Lucida Grande,
+                Lucida Sans Unicode,
+                Lucida Sans,
+                Garuda,
+                Verdana,
+                Tahoma,
+                sans-serif;
+            font-weight: 100;
+            margin-top: 10px;
+        }
+
+        /* Heart shape */
+        .heart {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            background-color: #d81b60;
+            transform: rotate(-45deg);
+            cursor: pointer;
+            z-index: 10;
+            animation: float 5s ease-in-out infinite;
+            touch-action: none;
+            /* Ensures it doesn't affect scroll */
+        }
+
+        .heart::before,
+        .heart::after {
+            content: "";
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            position: absolute;
+            background-color: #d81b60;
+        }
+
+        .heart::before {
+            top: -25px;
+            left: 0;
+        }
+
+        .heart::after {
+            left: 25px;
+            top: 0;
+        }
+
+        /* Animation to float around */
+        @keyframes float {
+            0% {
+                transform: translate(-50%, -50%) rotate(-45deg);
             }
 
-            h1 {
-                color: #d81b60;
+            50% {
+                transform: translate(-50%, -150%) rotate(-45deg);
             }
 
-            img {
-                max-width: 80%;
-                border-radius: 15px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            100% {
+                transform: translate(-50%, -50%) rotate(-45deg);
             }
+        }
 
-            iframe {
-                margin-top: 20px;
-                width: 300px;
-                height: 166px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            }
+        /* When dragging, pause the animation */
+        .dragging {
+            animation-play-state: paused;
+        }
 
-            .soundcloud-info {
+        .trail-heart {
+            width: 20px;
+            height: 20px;
+            background-color: #d81b60;
+            position: absolute;
+            transform: rotate(-45deg);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .trail-heart::before,
+        .trail-heart::after {
+            content: "";
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            position: absolute;
+            background-color: #d81b60;
+        }
+
+        .trail-heart::before {
+            top: -10px;
+            left: 0;
+        }
+
+        .trail-heart::after {
+            left: 10px;
+            top: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Just for you 💖</h1>
+
+    <img src="image.jpg" alt="A cute image for you" />
+    <p>You make my heart flutter every day. Hope you enjoy this!</p>
+
+    <!-- Heart floating animation -->
+    <div class="heart" id="heart"></div>
+
+    <!-- Embed SoundCloud music -->
+    <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay"
+        src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1917116312%3Fsecret_token%3Ds-B93OC5gf105&color=%23f8bbd0&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
+    <div style="
                 font-size: 10px;
                 color: #cccccc;
                 line-break: anywhere;
@@ -52,177 +174,115 @@
                     Tahoma,
                     sans-serif;
                 font-weight: 100;
-                margin-top: 10px;
+            ">
+        <a href="https://soundcloud.com/chummabhai" title="CB" target="_blank"
+            style="color: #cccccc; text-decoration: none">CB</a>
+        ·
+        <a href="https://soundcloud.com/chummabhai/meri-maya/s-B93OC5gf105" title="Meri Maya" target="_blank"
+            style="color: #cccccc; text-decoration: none">Meri Maya</a>
+    </div>
+
+    <script>
+        // JavaScript to make the heart draggable (mouse and touch)
+        const heart = document.getElementById("heart");
+        let isDragging = false;
+        let offsetX = 0;
+        let offsetY = 0;
+
+        // When the user presses the mouse button down
+        heart.addEventListener("mousedown", (e) => {
+            isDragging = true;
+            offsetX = e.clientX - heart.offsetLeft;
+            offsetY = e.clientY - heart.offsetTop;
+            heart.classList.add("dragging"); // Pause the animation while dragging
+            heart.style.transition = "none"; // Disable any CSS transitions
+            e.preventDefault(); // Prevent default behavior only for the heart
+        });
+
+        // When the user moves the mouse
+        document.addEventListener("mousemove", (e) => {
+            if (isDragging) {
+                heart.style.left = e.clientX - offsetX + "px";
+                heart.style.top = e.clientY - offsetY + "px";
             }
+        });
 
-            /* Heart shape */
-            .heart {
-                width: 50px;
-                height: 50px;
-                position: absolute;
-                top: 40%;
-                left: 50%;
-                background-color: #d81b60;
-                transform: rotate(-45deg);
-                cursor: pointer;
-                z-index: 10;
-                animation: float 5s ease-in-out infinite;
-                touch-action: none; /* Ensures it doesn't affect scroll */
-            }
+        // When the user releases the mouse button
+        document.addEventListener("mouseup", () => {
+            isDragging = false;
+            heart.classList.remove("dragging"); // Resume the animation after dragging
+            heart.style.transition = "top 0.3s ease, left 0.3s ease"; // Re-enable smooth transition
+        });
 
-            .heart::before,
-            .heart::after {
-                content: "";
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
-                position: absolute;
-                background-color: #d81b60;
-            }
+        // Handle touch start (for mobile devices)
+        heart.addEventListener("touchstart", (e) => {
+            const touch = e.touches[0];
+            isDragging = true;
+            offsetX = touch.clientX - heart.offsetLeft;
+            offsetY = touch.clientY - heart.offsetTop;
+            heart.classList.add("dragging");
+            heart.style.transition = "none";
+            e.preventDefault();
+        });
 
-            .heart::before {
-                top: -25px;
-                left: 0;
-            }
-
-            .heart::after {
-                left: 25px;
-                top: 0;
-            }
-
-            /* Animation to float around */
-            @keyframes float {
-                0% {
-                    transform: translate(-50%, -50%) rotate(-45deg);
-                }
-                50% {
-                    transform: translate(-50%, -150%) rotate(-45deg);
-                }
-                100% {
-                    transform: translate(-50%, -50%) rotate(-45deg);
-                }
-            }
-
-            /* When dragging, pause the animation */
-            .dragging {
-                animation-play-state: paused;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>Just for you 💖</h1>
-
-        <img src="image.jpg" alt="A cute image for you" />
-        <p>You make my heart flutter every day. Hope you enjoy this!</p>
-
-        <!-- Heart floating animation -->
-        <div class="heart" id="heart"></div>
-
-        <!-- Embed SoundCloud music -->
-        <iframe
-            width="100%"
-            height="166"
-            scrolling="no"
-            frameborder="no"
-            allow="autoplay"
-            src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1917116312%3Fsecret_token%3Ds-B93OC5gf105&color=%23f8bbd0&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"
-        ></iframe>
-        <div
-            style="
-                font-size: 10px;
-                color: #cccccc;
-                line-break: anywhere;
-                word-break: normal;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                font-family:
-                    Interstate,
-                    Lucida Grande,
-                    Lucida Sans Unicode,
-                    Lucida Sans,
-                    Garuda,
-                    Verdana,
-                    Tahoma,
-                    sans-serif;
-                font-weight: 100;
-            "
-        >
-            <a
-                href="https://soundcloud.com/chummabhai"
-                title="CB"
-                target="_blank"
-                style="color: #cccccc; text-decoration: none"
-                >CB</a
-            >
-            ·
-            <a
-                href="https://soundcloud.com/chummabhai/meri-maya/s-B93OC5gf105"
-                title="Meri Maya"
-                target="_blank"
-                style="color: #cccccc; text-decoration: none"
-                >Meri Maya</a
-            >
-        </div>
-
-        <script>
-            // JavaScript to make the heart draggable (mouse and touch)
-            const heart = document.getElementById("heart");
-            let isDragging = false;
-            let offsetX = 0;
-            let offsetY = 0;
-
-            // When the user presses the mouse button down
-            heart.addEventListener("mousedown", (e) => {
-                isDragging = true;
-                offsetX = e.clientX - heart.offsetLeft;
-                offsetY = e.clientY - heart.offsetTop;
-                heart.classList.add("dragging"); // Pause the animation while dragging
-                heart.style.transition = "none"; // Disable any CSS transitions
-                e.preventDefault(); // Prevent default behavior only for the heart
-            });
-
-            // When the user moves the mouse
-            document.addEventListener("mousemove", (e) => {
-                if (isDragging) {
-                    heart.style.left = e.clientX - offsetX + "px";
-                    heart.style.top = e.clientY - offsetY + "px";
-                }
-            });
-
-            // When the user releases the mouse button
-            document.addEventListener("mouseup", () => {
-                isDragging = false;
-                heart.classList.remove("dragging"); // Resume the animation after dragging
-                heart.style.transition = "top 0.3s ease, left 0.3s ease"; // Re-enable smooth transition
-            });
-
-            // Handle touch start (for mobile devices)
-            heart.addEventListener("touchstart", (e) => {
+        // Handle touch move (for mobile devices)
+        heart.addEventListener("touchmove", (e) => {
+            if (isDragging) {
                 const touch = e.touches[0];
-                isDragging = true;
-                offsetX = touch.clientX - heart.offsetLeft;
-                offsetY = touch.clientY - heart.offsetTop;
-                heart.classList.add("dragging");
-                heart.style.transition = "none";
-                e.preventDefault();
-            });
+                heart.style.left = touch.clientX - offsetX + "px";
+                heart.style.top = touch.clientY - offsetY + "px";
+            }
+        });
 
-            // Handle touch move (for mobile devices)
-            heart.addEventListener("touchmove", (e) => {
-                if (isDragging) {
-                    const touch = e.touches[0];
-                    heart.style.left = touch.clientX - offsetX + "px";
-                    heart.style.top = touch.clientY - offsetY + "px";
-                }
-            });
+        // Handle touch end (for mobile devices)
+        heart.addEventListener("touchend", () => {
+            isDragging = false;
+            heart.classList.remove("dragging");
+            heart.style.transition = "top 0.3s ease, left 0.3s ease";
+        });
 
-            // Handle touch end (for mobile devices)
-            heart.addEventListener("touchend", () => {
-                isDragging = false;
-                heart.classList.remove("dragging");
-                heart.style.transition = "top 0.3s ease, left 0.3s ease";
-            });
-        </script>
-    </body>
+        // When the user moves the mouse
+        heart.addEventListener("mousemove", (e) => {
+            if (isDragging) {
+                heart.style.left = e.clientX - offsetX + "px";
+                heart.style.top = e.clientY - offsetY + "px";
+
+                // Create a new heart element
+                const newHeart = document.createElement("div");
+                newHeart.className = "trail-heart";
+                newHeart.style.left = e.clientX - 10 + "px";
+                newHeart.style.top = e.clientY - 10 + "px";
+                document.body.appendChild(newHeart);
+
+                // Remove the heart element after a short delay
+                setTimeout(() => {
+                    newHeart.remove();
+                }, 500);
+            }
+        });
+
+        // Handle touch move (for mobile devices)
+        heart.addEventListener("touchmove", (e) => {
+            if (isDragging) {
+                const touch = e.touches[0];
+                heart.style.left = touch.clientX - offsetX + "px";
+                heart.style.top = touch.clientY - offsetY + "px";
+
+                // Create a new heart element
+                const newHeart = document.createElement("div");
+                newHeart.className = "trail-heart";
+                newHeart.style.left = touch.clientX - 10 + "px";
+                newHeart.style.top = touch.clientY - 10 + "px";
+                document.body.appendChild(newHeart);
+
+                // Remove the heart element after a short delay
+                setTimeout(() => {
+                    newHeart.remove();
+                }, 500);
+            }
+        });
+
+    </script>
+</body>
+
 </html>
